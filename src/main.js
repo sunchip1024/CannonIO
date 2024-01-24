@@ -1,4 +1,4 @@
-
+import GameStart from "./scripts/Scenes/GameScene.js";
 
 let nickname = "None";
 
@@ -20,6 +20,8 @@ function Start() {
     GAME_CANVAS.style.display = "block";
 
     console.log(nickname);
+
+    GameStart();
 }
 
 Awake();

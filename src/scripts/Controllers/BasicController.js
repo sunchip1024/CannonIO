@@ -1,27 +1,38 @@
-export default class BasicController {
+export class BasicController {
     constructor(player) {
         if(this.constructor === BasicController) { throw new Error("Must Abstract Class is inherited Sub Class!"); }
 
         this.controller = player;
+
+        this.keys = [];
+        this.keys["ArrowUp"] = new KeyInput("ArrowUp");
+        this.keys["ArrowDown"] = new KeyInput("ArrowDown");
+        this.keys["ArrowLeft"] = new KeyInput("ArrowLeft");
+        this.keys["ArrowRight"] = new KeyInput("ArrowRight");
+        this.keys["ShiftLeft"] = new KeyInput("ShiftLeft");
+        this.keys["ControlLeft"] = new KeyInput("ControlLeft");
+        this.keys["KeyZ"] = new KeyInput("KeyZ");
     }
 
-    HandleInput(key) {
-        if(typeof key === KeyboardEvent)    throw new Error("[ BasicController - HandleInput(key) ] parameter is not type of KeyboardEvent!");
+    HandleInput() { throw new Error("Not Implementation Error"); }
+}
 
-        if(key.code === "ArrowLeft")            this.OnArrowLeftKeyDown(this.controller);
-        else if(key.code === "ArrowRight")      this.OnArrowRightKeyDown(this.controller);
-        else if(key.code === "ArrowUp")         this.OnArrowUpKeyDown(this.controller);
-        else if(key.code === "ArrowDown")       this.OnArrowDownKeyDown(this.controller);
-        else if(key.code === "ShiftLeft")       this.OnShiftLeftKeyDown(this.controller);
-        else if(key.code === "ControlLeft")     this.OnControlLeftKeyDown(this.controller);
-        else if(key.code === "KeyZ")            this.OnKeyZDown(this.controller);
+export class KeyInput {
+    #isPressed = false;
+
+    constructor(code) {
+        window.addEventListener("keydown", (e) => {
+            if(e.code !== code)             return;
+            if(this.#isPressed === true)    return;
+            this.#isPressed = true;
+        });
+
+        window.addEventListener("keyup", (e) => {
+            if(e.code != code)              return;
+            if(this.#isPressed === false)   return;
+            this.#isPressed = false;
+        });
     }
 
-    OnArrowLeftKeyDown(player) { throw new Error("Not Implementation Error"); }
-    OnArrowRightKeyDown(player) { throw new Error("Not Implementation Error"); }
-    OnArrowUpKeyDown(player) { throw new Error("Not Implementation Error"); }
-    OnArrowDownKeyDown(player) { throw new Error("Not Implementation Error"); }
-    OnShiftLeftKeyDown(player) { throw new Error("Not Implementation Error"); }
-    OnControlLeftKeyDown(player) { throw new Error("Not Implementation Error"); }
-    OnKeyZDown(player) { throw new Error("Not Implementation Error"); }
+    IsPressed() { return this.#isPressed; }
 }
