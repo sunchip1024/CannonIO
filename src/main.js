@@ -1,8 +1,13 @@
-import GameStart from "./scripts/Scenes/GameScene.js";
+import * as THREE from "three";
+import execute from "./scripts/Game";
 
 let nickname = "None";
+Awake();
 
 function Awake() {
+    const GAME_CANVAS = document.querySelector("#game-div");
+    GAME_CANVAS.style.display = "none";
+    
     const button = document.querySelector("#enterButton");
     button.onclick = function() {
         const inputNickname = document.querySelector("#nickname").value;
@@ -19,9 +24,6 @@ function Start() {
     LOBBY.style.display = "none";
     GAME_CANVAS.style.display = "block";
 
-    console.log(nickname);
-
-    GameStart();
+    execute();
 }
 
-Awake();

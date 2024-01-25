@@ -3,7 +3,7 @@
     height: 100vh;
     margin: 0;
 
-    background-color: aqua;
+    background: aqua;
 
     display: flex;
     flex-direction: column;
@@ -40,6 +40,10 @@
 
 #game-div {
     position: absolute;
+    width: 1920px;
+    height: 1080px;
     left: 0;
     top: 0;
+
+    background-color: black;
 }

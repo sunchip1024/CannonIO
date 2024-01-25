@@ -1,30 +1,32 @@
 import * as THREE from "three";
+import Engine from "../ThreeEngine/Engine/Engine.js";
+import GameObject from "../ThreeEngine/Objects/GameObject.js";
+import Input from "../ThreeEngine/Utils/Input.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-export default class Player {
-    #Mesh;
+export default class Player extends GameObject{
     #isMine;
-
-    #clock = new THREE.Clock;
-
-    constructor(mesh, isMine = false) {
-        if(mesh.constructor !== THREE.Mesh)  throw new Error("[ Player - Constructor(mesh, isMine) ] mesh parameter is must Mesh!");
-        if(isMine.constructor !== Boolean)   throw new Error("[ Player - Constructor(mesh, isMine) ] isMine Parameter is must Boolean!");
-        
-        this.#Mesh = mesh;
+    constructor(isMine = false) {
+        super(new THREE.Mesh());
         this.#isMine = isMine;
+
+        const loader = new GLTFLoader();
+        loader.load(
+            "./models/player.glb",
+            (glb) => {
+                this.Mesh = glb.scene;
+            }
+        );
     }
 
-    Translate(direction) {
-        if(direction.constructor !== THREE.Vector3)  throw new Error("[ Player - Translate(direction) ] direction parameter is must Vector3!");
+    FixedUpdate() {
+        this.#Move();
+    }
 
-        const WALK_SPEED = 10;
-        const DELTA_TIME = this.#clock.getDelta();
-        let moveDir = direction;
-        moveDir.normalize();
-        moveDir.multiplyScalar(WALK_SPEED * DELTA_TIME);
-
-        this.#Mesh.position.x += moveDir.x;
-        this.#Mesh.position.y += moveDir.y;
-        this.#Mesh.position.z += moveDir.z;
+    #Move() {
+        const WALK_SPEED = 2;
+        let moveDir = new THREE.Vector3(Input.GetHorizontal(), 0, Input.GetVertical());
+        moveDir.addScalar(WALK_SPEED * Engine.FixedDeltaTime);
+        this.Transform.Translate(moveDir);
     }
 }
