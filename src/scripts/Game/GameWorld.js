@@ -22,8 +22,7 @@ export default class GameWorld extends Engine.World {
         */
 
         const camera = this.camera;
-        camera.position.y = 2.5;
-        camera.position.z = -5;
+        camera.position.set(0, 2.5, -5);
         camera.lookAt(new THREE.Vector3(0, 0, 0));
     }
 }

@@ -25,8 +25,8 @@ function Start() {
     LOBBY.style.display = "none";
     GAME_CANVAS.style.display = "block";
 
-    execute();
-    //const world = new GameWorld();
-    //world.Start();
+    //execute();
+    const world = new GameWorld();
+    world.Start();
 }
 

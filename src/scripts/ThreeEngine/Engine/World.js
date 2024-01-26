@@ -20,7 +20,7 @@ export default class World {
 
         this.scene = new THREE.Scene();
 
-        this.light = new THREE.AmbientLight();
+        this.light = new THREE.AmbientLight(0xffffff, 1);
         this.scene.add(this.light);
 
         this.camera = new THREE.PerspectiveCamera({
@@ -41,7 +41,7 @@ export default class World {
             gravity: new CANNON.Vec3(0, -9.8, 0)
         });
 
-        window.addEventListener('resize', () => World.worldList[name].ResizeWorld());
+        window.addEventListener('resize', this.ResizeWorld);
     }
 
     // Set Target
