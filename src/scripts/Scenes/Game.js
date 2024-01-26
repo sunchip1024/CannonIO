@@ -1,4 +1,4 @@
-import Input from "./ThreeEngine/Utils/Input";
+import Input from "../ThreeEngine/Utils/Input";
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -26,7 +26,7 @@ export default function execute() {
     scene.add(camera);
 
     // Set Renderer
-    const canvas = document.querySelector("#game-div");
+    const canvas = document.querySelector("#game-canvas");
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
@@ -93,7 +93,7 @@ export default function execute() {
     cannonWorld.addBody(boxBody);
 
     // add Cannon objects
-    const MAX_CANNON_LENGTH = 10;
+    const MAX_CANNON_LENGTH = 20;
     const NORMAL_CANNON_MATERIAL = new THREE.MeshBasicMaterial({color: "blue"});
     const CLOSEST_CANNON_MATERIAL = new THREE.MeshBasicMaterial({color: "red"});
     let cannonMeshes = [];

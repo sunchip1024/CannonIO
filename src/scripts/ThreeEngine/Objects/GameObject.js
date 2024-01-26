@@ -1,71 +1,108 @@
 import * as THREE from "three";
-import Transform from "../Components/Transform.js";
-import { CheckType } from "../Utils/Utils.js";
+import * as CANNON from "cannon-es";
 
 export default class GameObject {
-    constructor(mesh) {
-        this.Mesh = mesh;
-        this.Transform = new Transform(this);
+    /**
+     * This Create new GameObject
+     * @param {*} world - world object which put this object
+     * @param {*} mesh  - mesh object which want to create
+     * @param {*} physics - cannon physics body object 
+     */
+    constructor(world, mesh = undefined, physics = undefined) {
+        if(world === undefined || world === null)
+            throw new SyntaxError("[ GameObject ] GameObject must get world which object is put in!");
+
+        this.world = world;
+        this.mesh = mesh;
+        this.physics = physics;
+        this.#active = true;
+
+        if(mesh !== undefined)   
+            this.world.Add(this);
     }
 
-    /*
-    // [[ Object Component Method ]]
-    AddComponent(comp) {
-        if(comp.constructor === Transform)  throw new TypeError("[ Object - AddComponent(comp) ] Cannot Add Transform Component To Object!");
-        CheckType(comp, Component);
-        this[comp.constructor] = comp;
+    /**
+     * This is run when world is started
+     */
+    Start() {
+        if(this.constructor === GameObject)
+            throw new SyntaxError("[ GameObject - Start() ] Class which inherit GameObject mus implement Start method!");
     }
 
-    GetComponent(type) { 
-        if(this[type] === undefined)    throw new ReferenceError("[ Object - GetComponent(type) ] There is no type to get");
-        return this[type];
-    }
-    */
-
-    // [[ Object Activation Method ]]
-    #activation = true;
-    SetActivate(act) {
-        CheckType(act, Boolean);
-
-        if(act === true)    this.Start();
-        this.#activation = act;
+    /**
+     * This is run when world update routine is played
+     */
+    Update() {
+        if(this.constructor === GameObject)
+            throw new SyntaxError("[ GameObject - Update() ] Class which inherit GameObject mus implement Update method!");
     }
 
-    IsActivated() { return this.#activation; }
+    Position() {
+        if(this.mesh === undefined) {
+            if(this.physics === undefined)
+                throw new Error("[ GameObject - Position() ] there is no mesh and physics body!");
+            else {
+                const pos = this.physics.position;
+                return {x: pos.x, y: pos.y, z: pos.z};
+            }
+        } else {
+            const pos = this.mesh.position;
+            return {x: pos.x, y: pos.y, z: pos.z};
+        }
+    }
 
-    // [[ Object LiftCycle Event Method ]]
-    Awake() { }
-    Start() { }
-    Update() { }
-    FixedUpdate() { }
-    LateUpdate() { }
+    /**
+     * Set Position of object
+     * @param {*} x 
+     * @param {*} y 
+     * @param {*} z 
+     */
+    SetPosition(x, y, z) {
+        this.mesh.position.set(x, y, z);
 
+        if(this.physics !== undefined)
+            this.physics.position.set(x, y, z);
+    }
+    
+    /**
+     * Set Rotation of object
+     * @param {*} x 
+     * @param {*} y 
+     * @param {*} z 
+     */
+    SetRotation(x, y, z) {
+        this.mesh.rotation.set(x, y, z);
 
-    // [[ Object LifeCycle for Engine ]]
-    EngineAwake() {
-        this.Awake();
-        this.Transform.GetChildren().forEach((child) => child.gameObject.EngineAwake());
+        if(this.physics !== undefined)
+            this.physics.quaternion.setFromEuler(x, y, z, "YXZ");
     }
-    EngineStart() {
-        if(this.IsActivated() === false)    return;
-        this.Start();
-        this.Transform.GetChildren().forEach((child) => child.gameObject.EngineStart());
+
+    /**
+     * Move Object
+     * @param {*} x 
+     * @param {*} y 
+     * @param {*} z 
+     */
+    Translate(x, y, z) {
+        const currentPos = this.mesh.position;
+        this.SetPosition(currentPos.x + x, currentPos.y + y, currentPos.z + z);
     }
-    EngineUpdate() {
-        if(this.IsActivated() === false)    return;
-        this.Update();
-        this.Transform.GetChildren().forEach((child) => child.gameObject.EngineUpdate());
+
+    /**
+     * Rotate Object
+     * @param {*} x 
+     * @param {*} y 
+     * @param {*} z 
+     */
+    Rotate(x, y, z) {
+        const currentRot = this.mesh.rotation;
+        this.SetRotation(currentRot.x + x, currentRot.y + y, currentRot.z + z);
     }
-    EngineFixedUpdate() {
-        if(this.IsActivated() === false)    return;
-        this.FixedUpdate();
-        this.Transform.GetChildren().forEach((child) => child.gameObject.EngineFixedUpdate());
-    }
-    EngineLateUpdate() {
-        if(this.IsActivated() === false)    return;
-        this.LateUpdate();
-        this.Transform.GetChildren().forEach((child) => child.gameObject.EngineLateUpdate());
+
+    #active;
+    SetActive(active) { 
+        this.#active = active; 
+
+        if(active === true) this.Start();
     }
 }
-
-
